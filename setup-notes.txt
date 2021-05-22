@@ -1,0 +1,95 @@
+// Apollo Client notes
+  // Basic setup
+    // Install libs
+      yarn add @apollo/client graphql
+
+    // Add client instance to main index file
+      import { ApolloClient, InMemoryCache } from '@apollo/client';
+
+      const client = new ApolloClient({
+        uri: 'https://48p1r2roz4.sse.codesandbox.io',
+        cache: new InMemoryCache()
+      });
+
+    // Import the graphQL query parser
+      import { gql } from '@apollo/client';
+
+    // Execute the query with client.query
+      client
+        .query({
+          query: gql`
+          query GetRates {
+            rates(currency: "USD"): {
+              currency
+            } 
+          }
+        `,
+        })
+        .then(result => console.log({result}));
+
+    // Result response from above:
+      {
+        result: {
+          data: {
+            rates: []
+          },
+          loading: false,
+          networkStatus: 7
+        }
+      }
+
+  // Integrate with React 
+    Wrap the app with ApolloProvider; similar to React's context.Provider
+      const App = () => (
+        <ApolloProvider client={client}>
+          <Home />
+        </ApolloProvider>
+      );
+
+  // Use queries in functional components
+    import {useQuery, gql} from '@apollo/client';
+    import {FlatList, SafeAreaView, StyleSheet, View, Text} from 'react-native';
+
+    const EXCHANGE_RATES = gql`
+      query GetExchangeRates {
+        rates(currency: "USD") {
+          currency
+          rate
+        }
+      }
+    `;
+
+    export default function ExchangeRates() {
+      const {loading, error, data} = useQuery(EXCHANGE_RATES);
+
+      if (error) {
+        return (
+          <View>
+            <Text>Error</Text>
+          </View>
+        );
+      }
+
+      const renderItem = ({item, index}) => {
+        return (
+          <View key={index.toString()}>
+            <Text>
+              {item.currency}: {item.rate}
+            </Text>
+          </View>
+        );
+      };
+
+      return (
+        <SafeAreaView style={styles.safeView}>
+          <View style={styles.container}>
+            {loading ? (
+              <Text>Loading...</Text>
+            ) : (
+              <FlatList data={data.rates} renderItem={renderItem} />
+            )}
+          </View>
+        </SafeAreaView>
+      );
+    }
+
