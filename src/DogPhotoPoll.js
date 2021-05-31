@@ -11,13 +11,14 @@ const GET_DOG_PHOTO = gql`
   }
 `;
 
-export default function DogPhoto({ breed }) {
+export default function DogPhotoPoll({ breed }) {
   const { loading, error, data } = useQuery(GET_DOG_PHOTO, {
     variables: { breed },
+    pollInterval: 500,
   });
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <Text>Loading image...</Text>;
   }
 
   if (error) {

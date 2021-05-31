@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 
 import DogPhoto from './DogPhoto';
+import DogPhotoPoll from './DogPhotoPoll';
+import DogPhotoRefetch from './DogPhotoRefetch';
 
 const GET_DOGS = gql`
   query GetDogs {
@@ -21,14 +23,17 @@ const GET_DOGS = gql`
 
 export default function Dogs() {
   const { loading, error, data } = useQuery(GET_DOGS);
-  const [selectedBreed, setSelectedBreed] = useState(null);
+
+  const [selectedBreeds, setSelectedBreeds] = useState([]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       key={item.id}
-      onPress={() => setSelectedBreed(item.breed)}>
-      <Text style={styles.getItem(item.id, selectedBreed)}>{item.breed}</Text>
-      {selectedBreed === item.breed ? <DogPhoto breed={selectedBreed} /> : null}
+      onPress={() => setSelectedBreeds([...selectedBreeds, item.breed])}>
+      <Text style={styles.getItem(item.id, selectedBreeds)}>{item.breed}</Text>
+      {selectedBreeds.includes(item.breed) ? (
+        <DogPhoto breed={item.breed} />
+      ) : null}
     </TouchableOpacity>
   );
 
@@ -56,7 +61,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  getItem: (breed, selectedBreed) => ({
-    fontWeight: breed === selectedBreed ? 'bold' : 'normal',
+  getItem: (breed, selectedBreeds) => ({
+    fontWeight: selectedBreeds.includes(breed) ? 'bold' : 'normal',
   }),
 });

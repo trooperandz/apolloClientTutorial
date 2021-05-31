@@ -11,13 +11,13 @@ const GET_DOG_PHOTO = gql`
   }
 `;
 
-export default function DogPhoto({ breed }) {
-  const { loading, error, data } = useQuery(GET_DOG_PHOTO, {
+export default function DogPhotoRefetch({ breed }) {
+  const { loading, error, data, refetch } = useQuery(GET_DOG_PHOTO, {
     variables: { breed },
   });
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return null;
   }
 
   if (error) {
