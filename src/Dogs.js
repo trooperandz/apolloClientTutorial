@@ -21,6 +21,8 @@ const GET_DOGS = gql`
   }
 `;
 
+const Component = DogPhotoRefetch;
+
 export default function Dogs() {
   const { loading, error, data } = useQuery(GET_DOGS);
 
@@ -32,7 +34,7 @@ export default function Dogs() {
       onPress={() => setSelectedBreeds([...selectedBreeds, item.breed])}>
       <Text style={styles.getItem(item.id, selectedBreeds)}>{item.breed}</Text>
       {selectedBreeds.includes(item.breed) ? (
-        <DogPhoto breed={item.breed} />
+        <Component breed={item.breed} />
       ) : null}
     </TouchableOpacity>
   );
