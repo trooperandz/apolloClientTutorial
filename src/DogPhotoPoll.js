@@ -1,6 +1,6 @@
 import React from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { Image, StyleSheet, Text } from 'react-native';
+import { gql, NetworkStatus, useQuery } from '@apollo/client';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 const GET_DOG_PHOTO = gql`
   query Dog($breed: String!) {
@@ -11,24 +11,34 @@ const GET_DOG_PHOTO = gql`
   }
 `;
 
+// TODO: never getting the poll network status back
 export default function DogPhotoPoll({ breed }) {
-  const { loading, error, data } = useQuery(GET_DOG_PHOTO, {
+  const { loading, error, data, networkStatus } = useQuery(GET_DOG_PHOTO, {
     variables: { breed },
-    pollInterval: 1000,
+    pollInterval: 1500,
   });
-
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
 
   if (error) {
     return <Text>Error: {error}</Text>;
   }
-
-  return <Image source={{ uri: data.dog.displayImage }} style={styles.image} />;
+  console.log({ networkStatus });
+  return (
+    <View style={styles.container}>
+      {networkStatus === NetworkStatus.poll ? (
+        <Text>Polling...</Text>
+      ) : loading ? (
+        <Text>Loading...</Text>
+      ) : (
+        <Image source={{ uri: data.dog.displayImage }} style={styles.image} />
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    height: 100,
+  },
   image: {
     height: 100,
     width: 100,

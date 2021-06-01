@@ -1,5 +1,5 @@
 import React from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { gql, NetworkStatus, useQuery } from '@apollo/client';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const GET_DOG_PHOTO = gql`
@@ -12,13 +12,13 @@ const GET_DOG_PHOTO = gql`
 `;
 
 export default function DogPhotoRefetch({ breed }) {
-  const { loading, error, data, refetch } = useQuery(GET_DOG_PHOTO, {
-    variables: { breed },
-  });
-
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
+  const { loading, error, data, networkStatus, refetch } = useQuery(
+    GET_DOG_PHOTO,
+    {
+      variables: { breed },
+      notifyOnNetworkStatusChange: true,
+    },
+  );
 
   if (error) {
     return <Text>Error: {error}</Text>;
@@ -26,10 +26,18 @@ export default function DogPhotoRefetch({ breed }) {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: data.dog.displayImage }} style={styles.image} />
-      <TouchableOpacity style={styles.button} onPress={() => refetch()}>
-        <Text style={styles.text}>Refetch</Text>
-      </TouchableOpacity>
+      {networkStatus === NetworkStatus.refetch ? (
+        <Text>Refetching...</Text>
+      ) : loading ? (
+        <Text>Loading...</Text>
+      ) : (
+        <>
+          <Image source={{ uri: data.dog.displayImage }} style={styles.image} />
+          <TouchableOpacity style={styles.button} onPress={() => refetch()}>
+            <Text style={styles.text}>Refetch</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 }
@@ -46,6 +54,7 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
+    height: 152,
   },
   image: {
     height: 100,

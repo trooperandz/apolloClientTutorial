@@ -21,7 +21,7 @@ const GET_DOGS = gql`
   }
 `;
 
-const Component = DogPhotoRefetch;
+const Component = DogPhotoPoll;
 
 export default function Dogs() {
   const { loading, error, data } = useQuery(GET_DOGS);
