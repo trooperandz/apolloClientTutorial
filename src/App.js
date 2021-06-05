@@ -1,7 +1,9 @@
 import React from 'react';
-import {ApolloClient, InMemoryCache} from '@apollo/client';
-import {ApolloProvider} from '@apollo/client/react';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
+import 'react-native-gesture-handler';
 
+import RootNavigation from './navigations';
 import Dogs from './Dogs';
 
 const client = new ApolloClient({
@@ -11,7 +13,7 @@ const client = new ApolloClient({
 
 const App = () => (
   <ApolloProvider client={client}>
-    <Dogs />
+    <RootNavigation />
   </ApolloProvider>
 );
 
