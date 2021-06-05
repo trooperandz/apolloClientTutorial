@@ -15,7 +15,8 @@ const GET_DOG_PHOTO = gql`
 export default function DogPhotoPoll({ breed }) {
   const { loading, error, data, networkStatus } = useQuery(GET_DOG_PHOTO, {
     variables: { breed },
-    pollInterval: 1500,
+    notifyOnNetworkStatusChange: true,
+    pollInterval: 1200,
   });
 
   if (error) {
